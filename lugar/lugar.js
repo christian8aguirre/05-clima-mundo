@@ -1,23 +1,25 @@
 const axios= require('axios');
-import {API_KEY_GOOGLE} from '../secret'
-const getLugarLatLng = (direccion) =>{
+const { API_KEY_GOOGLE } = require('../secret');
+
+const getLugarLatLng = async(direccion) =>{
     
+    let encodeURL=encodeURI(direccion);
+    let resp = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURL}&key=${API_KEY_GOOGLE}`)
+
+    if (resp.data.status === "ZERO_RESULTS") {
+        throw new Error (`No hay resultados para la ciuda ${ direccion }`)
+    }
+
+    let loc = resp.data.results[0];
+    let coors = loc.geometry.location;
     
     return {
-        direccion,
-        lat,
-        lng
+        direccion: loc.formatted_address,
+        lat: coors.lat,
+        lng: coors.lng,
     }
 }
 
-
-let encodeURL=encodeURI(argv.direccion);
-axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURL}&key=${API_KEY_GOOGLE}`)
-    .then(resp => {
-        let location = resp.data.results[0];
-        let coors = location.geometry.location;
-        console.log(location.formatted_address);
-        console.log(coors.lat);
-        console.log(coors.lng);
-    })
-    .catch(e => console.log('Error!!!',e))
+module.exports = {
+    getLugarLatLng,
+}
