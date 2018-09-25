@@ -16,4 +16,4 @@ const argv = require('yargs').options({
 
 clima.getClima(23.634501, -102.552784)
     .then( temp => console.log(temp))
-    .catch( err => console.log(err))
+    .catch( err => console.log(err));
